@@ -1,0 +1,22 @@
+{
+  "name": "wpwildfire/wpdotenv",
+  "type": "library",
+  "description": "Adds support for .env file configuration to Wordpress installation",
+  "homepage": "https://github.com/WPWildfire/wpdotenv",
+  "license" : "MIT",
+  "require": {
+    "symfony/dotenv": "^5.0.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7"
+  },
+  "autoload": {
+    "psr-4": { "WpWildfire\\": "src" }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.9-dev"
+    }
+  }
+}
