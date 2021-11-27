@@ -4,12 +4,11 @@ namespace WpWildfire;
 
 use RuntimeException;
 use Closure;
-use Symfony\Component\Dotenv\Dotenv;
 use WpWildfire\ConfigLoader\Database;
 use WpWildfire\ConfigLoader\Environment;
 
 /**
- * Acts as a registry service for Wordpress configuration via .env variables
+ * Processes environment variables into Wordpress configuration
  */
 final class ConfigLoader
 {
@@ -22,17 +21,17 @@ final class ConfigLoader
     /**
      * @var array of environment variables to be processed
      */
-    private static $env = [];
+    private static array $env = [];
 
     /**
      * @var array of php variables to be processed
      */
-    private static $var = [];
+    private static array $var = [];
 
     /**
      * @var array of callbacks which will be executed after the wp-settings inclusion
      */
-    private static $callbacks = [];
+    private static array $callbacks = [];
 
     /**
      * @var array of loaders which will be invoked to handle configuration loading
@@ -43,14 +42,10 @@ final class ConfigLoader
     ];
 
     /**
-     * Invokes dotenv to process the supplied .env file and registers any additional loaders
-     *
+     * Registers the loaders
      */
-    public function __construct(private ?string $dotenv_file_path)
+    public function __construct()
     {
-        if ($this->dotenv_file_path) {
-            (new Dotenv())->load($this->dotenv_file_path);
-        }
         $this->registerAdditionalLoaders();
         $this->executeLoaders();
     }
@@ -58,7 +53,7 @@ final class ConfigLoader
     /**
      * Loops through all registered loaders and calls the load() method
      */
-    private function executeLoaders()
+    private function executeLoaders(): void
     {
         foreach (self::$loaders as $loader) {
             (new $loader())->load($this);
@@ -69,7 +64,7 @@ final class ConfigLoader
      * Reads the WORDPRESS_ENV_LOADERS variable from the .env file and registers
      * any additional loaders that have been defined (as csv list of fq class names)
      */
-    private function registerAdditionalLoaders()
+    private function registerAdditionalLoaders(): void
     {
         if (isset($_ENV['WORDPRESS_ENV_LOADERS'])) {
             foreach (explode(",", $_ENV['WORDPRESS_ENV_LOADERS']) as $loader) {
@@ -81,10 +76,8 @@ final class ConfigLoader
     /**
      * Registers additional loader classes after validating that they exist
      * and that they implement the required interface for loaders
-     *
-     * @param $class_name
      */
-    private function registerLoader($class_name)
+    private function registerLoader(string $class_name): void
     {
         if (class_exists($class_name)) {
             $interfaces = class_implements($class_name);
@@ -107,10 +100,8 @@ final class ConfigLoader
      * of environment variables which will be processed by the loading method. This assumes
      * that the variable name in the .env file will match exactly to the required
      * constant name which will be defined
-     *
-     * @param array $envs
      */
-    public function addEnvs(array $envs)
+    public function addEnvs(array $envs): void
     {
         foreach ($envs as $name) {
             $this->addEnv($name, $name);
@@ -123,10 +114,12 @@ final class ConfigLoader
      * @param string $name The $_ENV var name to assign
      * @param string $env_key The .env var name to read the value from
      */
-    public function addEnv($name, $env_key)
+    public function addEnv(string $name, string $env_key): void
     {
-        if (!getenv($env_key)) {
-            syslog(LOG_WARNING, "Expected environment variable $env_key not defined.");
+        if (!isset($_ENV[$env_key])) {
+            throw new RuntimeException(
+                sprintf('Environment variable %s not defined', $env_key)
+            );
         }
         $this->addEnvValue($name, $_ENV[$env_key] ?? '');
     }
@@ -137,29 +130,15 @@ final class ConfigLoader
      * @param string $key
      * @param string $val
      */
-    public function addEnvValue($key, $val)
+    public function addEnvValue(string $key, mixed $val): void
     {
         self::$env[$key] = $val;
     }
 
     /**
-     * Add a PHP variable and define which .env key the value should be ready from
-     *
-     * @param $name
-     * @param $env_key
-     */
-    public function addEnvVar($name, $env_key)
-    {
-        $this->addVar($name, $_ENV[$env_key]);
-    }
-
-    /**
      * Add a PHP variable and supply its value
-     *
-     * @param $name
-     * @param $val
      */
-    public function addVar($name, $val)
+    public function addVar(string $name, string $val)
     {
         self::$var[$name] = $val;
     }
@@ -210,5 +189,4 @@ final class ConfigLoader
             $callback();
         }
     }
-
 }
