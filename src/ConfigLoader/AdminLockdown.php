@@ -16,7 +16,7 @@ use WpWildfire\ConfigLoaderInterface;
  */
 class AdminLockdown implements ConfigLoaderInterface
 {
-    public function load(ConfigLoader $loader)
+    public function load(ConfigLoader $loader): void
     {
         // If the LOCKDOWN value is set to true in .env, then invoke our custom behavior
         if (isset($_ENV['LOCKDOWN']) && (bool)$_ENV['LOCKDOWN']) {

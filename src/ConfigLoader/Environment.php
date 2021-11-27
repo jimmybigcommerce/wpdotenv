@@ -10,9 +10,9 @@ use WpWildfire\ConfigLoaderInterface;
  */
 class Environment implements ConfigLoaderInterface
 {
-    public function load(ConfigLoader $loader)
+    public function load(ConfigLoader $loader): void
     {
-        $loader->addEnvValue('WP_DEBUG', isset($_ENV['WP_DEBUG']) ? (bool)$_ENV['WP_DEBUG'] : false);
+        $loader->addEnvValue('WP_DEBUG', isset($_ENV['WP_DEBUG']) && $_ENV['WP_DEBUG']);
         $loader->addEnvs([
             'AUTH_KEY',
             'SECURE_AUTH_KEY',

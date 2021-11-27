@@ -10,11 +10,11 @@ use WpWildfire\ConfigLoaderInterface;
  */
 class Database implements ConfigLoaderInterface
 {
-    public function load(ConfigLoader $loader)
+    public function load(ConfigLoader $loader): void
     {
-        $loader->addEnvValue('DB_CHARSET', isset($_ENV['DB_CHARSET']) ? $_ENV['DB_CHARSET'] : 'utf8');
-        $loader->addEnvValue('DB_COLLATE', isset($_ENV['DB_COLLATE']) ? $_ENV['DB_COLLATE'] : '');
-        $loader->addVar('table_prefix', isset($_ENV['DB_TABLE_PREFIX']) ? $_ENV['DB_TABLE_PREFIX'] : 'wp_');
+        $loader->addEnvValue('DB_CHARSET', $_ENV['DB_CHARSET'] ?? 'utf8');
+        $loader->addEnvValue('DB_COLLATE', $_ENV['DB_COLLATE'] ?? '');
+        $loader->addVar('table_prefix', $_ENV['DB_TABLE_PREFIX'] ?? 'wp_');
         $loader->addEnvs([
             'DB_NAME',
             'DB_USER',
