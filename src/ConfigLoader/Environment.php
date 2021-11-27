@@ -12,7 +12,7 @@ class Environment implements ConfigLoaderInterface
 {
     public function load(ConfigLoader $loader): void
     {
-        $loader->addEnvValue('WP_DEBUG', isset($_ENV['WP_DEBUG']) && $_ENV['WP_DEBUG']);
+        $loader->addEnvValue('WP_DEBUG', isset($_ENV['WP_DEBUG']) && (bool)$_ENV['WP_DEBUG']);
         $loader->addEnvs([
             'AUTH_KEY',
             'SECURE_AUTH_KEY',

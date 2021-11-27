@@ -12,7 +12,7 @@ use WpWildfire\ConfigLoaderInterface;
  */
 class Multisite implements ConfigLoaderInterface
 {
-    public function load(ConfigLoader $loader): void
+    public function load(ConfigLoader $loader)
     {
         /* Multisite Configured */
         if (isset($_ENV['DOMAIN_CURRENT_SITE']) && (bool)$_ENV['DOMAIN_CURRENT_SITE']) {
