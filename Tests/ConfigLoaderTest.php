@@ -60,7 +60,8 @@ DOTENVFILE;
      */
     public function testConfigLoader()
     {
-        $loader = new \WpWildfire\ConfigLoader($this->test_env_file);
+        (new \Symfony\Component\Dotenv\Dotenv())->load($this->test_env_file);
+        $loader = new \WpWildfire\ConfigLoader();
         foreach ($loader->load() as $global_var => $value) {
             $$global_var = $value;
         }
@@ -94,6 +95,7 @@ DOTENVFILE;
     public function testConfigLoaderCallbacks()
     {
         $this->mockWordpressFunctions();
+        (new \Symfony\Component\Dotenv\Dotenv())->load($this->test_env_file);
         $loader = new \WpWildfire\ConfigLoader($this->test_env_file);
         $loader->invokeCallbacks();
 
