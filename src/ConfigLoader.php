@@ -116,7 +116,7 @@ final class ConfigLoader
      */
     public function addEnv(string $name, string $env_key): void
     {
-        if (!getenv($env_key)) {
+        if (!isset($_ENV[$env_key])) {
             throw new RuntimeException(
                 sprintf('Environment variable %s not defined', $env_key)
             );
