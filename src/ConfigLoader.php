@@ -5,6 +5,8 @@ namespace WpWildfire;
 use RuntimeException;
 use Closure;
 use Symfony\Component\Dotenv\Dotenv;
+use WpWildfire\ConfigLoader\Database;
+use WpWildfire\ConfigLoader\Environment;
 
 /**
  * Acts as a registry service for Wordpress configuration via .env variables
@@ -15,7 +17,7 @@ final class ConfigLoader
     /**
      * All custom loader classes must implement this interface
      */
-    const REQUIRED_INTERFACE = 'WpWildfire\ConfigLoaderInterface';
+    const REQUIRED_INTERFACE = ConfigLoaderInterface::class;
 
     /**
      * @var array of environment variables to be processed
@@ -36,20 +38,19 @@ final class ConfigLoader
      * @var array of loaders which will be invoked to handle configuration loading
      */
     private static $loaders = [
-        'WpWildfire\ConfigLoader\Database',
-        'WpWildfire\ConfigLoader\Environment'
+        Database::class,
+        Environment::class
     ];
 
     /**
      * Invokes dotenv to process the supplied .env file and registers any additional loaders
      *
-     * @param string $path
-     * @param string ...$extraPaths
      */
-    public function __construct(string $path, string ...$extraPaths)
+    public function __construct(private ?string $dotenv_file_path)
     {
-        $dotenv = new Dotenv();
-        $dotenv->load($path);
+        if ($this->dotenv_file_path) {
+            (new Dotenv())->load($this->dotenv_file_path);
+        }
         $this->registerAdditionalLoaders();
         $this->executeLoaders();
     }
@@ -124,7 +125,10 @@ final class ConfigLoader
      */
     public function addEnv($name, $env_key)
     {
-        $this->addEnvValue($name, $_ENV[$env_key]);
+        if (!getenv($env_key)) {
+            syslog(LOG_WARNING, "Expected environment variable $env_key not defined.");
+        }
+        $this->addEnvValue($name, $_ENV[$env_key] ?? '');
     }
 
     /**

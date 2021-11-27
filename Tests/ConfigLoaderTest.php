@@ -21,7 +21,7 @@ class ConfigLoaderTest extends TestCase
     /**
      * Create the temp .env file we will use for testing
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         @mkdir($tmpdir = sys_get_temp_dir().'/wpwildfire_configloader');
         $this->test_env_file = tempnam($tmpdir, 'wpwildfire_configloader-');

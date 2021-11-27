@@ -1,8 +1,12 @@
 # WP Dotenv
 
 WP Dotenv enables Wordpress instances to be completely 
-configured using .env files, by mapping the environment variables
-to the constants and variables required by Wordpress.
+configured using .env files and/or environment variables, 
+by mapping the environment variables to the constants and variables required by Wordpress.
+
+This is helpful for containerising Wordpress and for managing
+configuration values without needing to edit/maintain a wp-config.php
+which contains secrets.
 
 ## What? / Why?
 
