@@ -176,11 +176,11 @@ final class ConfigLoader
      * Execute callbacks - callbacks can be used to add settings post-inclusion hooks
      * eg: add_filter, add_action, wp_enqueue_style, update_option etc
      */
-    public function invokeCallbacks()
+    public function invokeCallbacks($force_for_cli = false)
     {
 
         // Callbacks are only for web context
-        if (php_sapi_name() != 'cli') {
+        if (php_sapi_name() == 'cli' && !$force_for_cli) {
             return;
         }
 

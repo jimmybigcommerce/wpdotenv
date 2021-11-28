@@ -97,7 +97,7 @@ DOTENVFILE;
         $this->mockWordpressFunctions();
         (new \Symfony\Component\Dotenv\Dotenv())->load($this->test_env_file);
         $loader = new \WpWildfire\ConfigLoader();
-        $loader->invokeCallbacks();
+        $loader->invokeCallbacks(true);
 
         // The WpWildfire\ConfigLoader\AdminLockdown config has a callback
         // which invokes `add_filter` - so the mock function should have
