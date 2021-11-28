@@ -1,12 +1,12 @@
 # WP Dotenv
 
 WP Dotenv enables Wordpress instances to be completely 
-configured using .env files and/or environment variables, 
-by mapping the environment variables to the constants and variables required by Wordpress.
+configured using environment variables, either loaded
+via a .env file, or directly from the system environment.
 
 This is helpful for containerising Wordpress and for managing
-configuration values without needing to edit/maintain a wp-config.php
-which contains secrets.
+configuration values without the need to edit/maintain a `wp-config.php` 
+file containing secrets and/or conditional logic and/or configuration values.
 
 ## What? / Why?
 
@@ -22,7 +22,9 @@ end up with a very long and complex wp-config.php file which also cannot
 be committed to your source respository due to containing secrets/credentials.
 
 WP Dotenv enables all Wordpress configuration to be managed simply
-by placing all configuration variables into a .env file
+via environment variables. You can drop a `.env` file in the root
+of your Wordpress instance, or just define the environment variables
+in your system.
 
 It is completely extendable using an OO approach - so plugins, themes and
 custom code can register their own loaders which can define mappings from
@@ -33,7 +35,7 @@ after the settings are included (another common use case for wp-config.php).
 
 ## Features:
 
-* Configure Wordpress with .env files
+* Configure Wordpress with .env files and/or system environment variables
 * Installable via Composer
 * Universal wp-config.php which can be safely committed
 * Allows extended configuration for themes, plugins and custom code
@@ -73,6 +75,7 @@ SECURE_AUTH_SALT='put your unique phrase here'
 LOGGED_IN_SALT='put your unique phrase here'
 NONCE_SALT='put your unique phrase here'
 ```
+(Or you could just define them directly in environment variables)
 
 This is enough for a standard Wordpress installation to work.
 
@@ -97,8 +100,8 @@ sitting in one long configuration file.
 A custom configuration class must implement the `WpWildfire\ConfigLoaderInterface` 
 interface.
 
-Custom configuration classes are registered in the `.env` file 
-using the `WORDPRESS_ENV_LOADERS` environment variable.
+Custom configuration classes are registered via the `WORDPRESS_ENV_LOADERS` 
+environment variable.
 
 Here's a quick example of a custom environment loader which
 disables file editing, auto-updates and plugin management in admin:
@@ -130,7 +133,7 @@ class AdminLockdown implements ConfigLoaderInterface
 ```
 
 Which can then be registered by adding the following 2 lines to the
-`.env` file
+`.env` file (or defining them in system environment variables)
 
 ```bash
 WORDPRESS_ENV_LOADERS=WpWildfire\ConfigLoader\AdminLockdown
