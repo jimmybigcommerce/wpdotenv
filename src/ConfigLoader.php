@@ -180,7 +180,7 @@ final class ConfigLoader
     {
 
         // Callbacks are only for web context
-        if (php_sapi_name() != 'cli') {
+        if (php_sapi_name() == 'cli') {
             return;
         }
 
